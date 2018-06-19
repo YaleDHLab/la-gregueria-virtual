@@ -41,6 +41,7 @@ p.logo {
 .right {
 	height: 100%;
 	overflow: auto;
+	background: #eee;
 }
 
 @media (max-width: 720px) {

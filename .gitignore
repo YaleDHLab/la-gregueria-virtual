@@ -2,3 +2,4 @@ whoosh_index/
 __pycache__/
 node_modules/
 *.pem
+build/bundle.js

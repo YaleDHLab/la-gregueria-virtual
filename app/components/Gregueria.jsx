@@ -21,10 +21,6 @@ export default class Gregueria extends React.Component {
     this.props.onBodyClick(this.props.gregueria.id);
   }
 
-  componentWillMount() {
-    console.log(this.props);
-  }
-
   render() {
     let tagFooter = null;
 

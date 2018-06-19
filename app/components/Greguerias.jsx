@@ -56,6 +56,8 @@ export default class Greguerias extends React.Component {
     });
   }
 
+
+
   render() {
     return (
       <div className="greguerias">
@@ -81,8 +83,16 @@ export default class Greguerias extends React.Component {
   }
 }
 
-const getGreguerias = (state, props, funcs) =>
-  props.infinite ? (
+const getGreguerias = (state, props, funcs) => {
+  const spinner = (
+    <div className="spinner">
+      <div className="bounce1" />
+      <div className="bounce2" />
+      <div className="bounce3" />
+    </div>
+  )
+
+  return props.infinite ? (
     <InfiniteScroll
       pageStart={0}
       loadMore={funcs.addResults}
@@ -112,14 +122,7 @@ const getGreguerias = (state, props, funcs) =>
       ))}
     </div>
   );
-
-const spinner = props => (
-  <div className="spinner">
-    <div className="bounce1" />
-    <div className="bounce2" />
-    <div className="bounce3" />
-  </div>
-);
+}
 
 const modalStyle = {
   overlay: {

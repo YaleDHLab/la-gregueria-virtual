@@ -65,14 +65,10 @@ export default class Themes extends React.Component {
   }
 
   processSearch(err, res) {
-    if (err) {
-      console.warn(err);
-    } else {
-      const results = res.body["results"].map(result => {
-        return result["id"];
-      });
-      this.setState({ results: results });
-    }
+    if (err) console.warn(err);
+    else this.setState({
+      results: res.body["results"].map(r => r.id)
+    })
   }
 
   getTopic() {
@@ -123,23 +119,18 @@ export default class Themes extends React.Component {
       });
 
     const links = Graph.links
-      .filter(link => {
-        if (link.group == this.state.selectedNode.group) {
-          return true;
-        } else {
-          return false;
-        }
-      })
+      .filter(link => link.group == this.state.selectedNode.group
+          ? true
+          : false
+      )
       .map(link => {
         return (
-          <ForceGraphLink
-            key={`${link.source}=>${link.target}`}
+          <ForceGraphLink key={`${link.source}=>${link.target}`}
             link={{
               source: link.source,
               target: link.target,
               value: link.value
-            }}
-          />
+            }} />
         );
       });
 
@@ -177,11 +168,11 @@ export default class Themes extends React.Component {
           </InteractiveForceGraph>
         </div>
         <div className="right">
-          <Greguerias
-            greguerias={this.state.greguerias}
-            results={this.state.results}
-            onBodyClick={this.showModal}
-          />
+        <Greguerias
+          infinite={true}
+          results={this.state.greguerias}
+          onBodyClick={this.showModal}
+        />
         </div>
       </div>
     );
