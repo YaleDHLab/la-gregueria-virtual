@@ -22,11 +22,11 @@ export default class Header extends React.Component {
       <div>
         <Link to="/" className="header"><div>La Gregueria Virtual</div></Link>
         <div className="navigation">
-            <NavLink className="header-link" activeClassName="header-active" to="/search?view=text">Browse</NavLink>
-            <NavLink className="header-link" activeClassName="header-active" to="/search?view=map">Map</NavLink>
-            <NavLink className="header-link" activeClassName="header-active" to="/topics">Topics</NavLink>
-            <NavLink className="header-link" activeClassName="header-active" to="/about">About</NavLink>
-            <NavLink className="header-link" activeClassName="header-active" to="/spanish">Español</NavLink>
+          <NavLink className="header-link" activeClassName="header-active" to="/search?view=text">Browse</NavLink>
+          <NavLink className="header-link" activeClassName="header-active" to="/search?view=map">Map</NavLink>
+          <NavLink className="header-link" activeClassName="header-active" to="/topics">Topics</NavLink>
+          <NavLink className="header-link" activeClassName="header-active" to="/about">About</NavLink>
+          {/*<NavLink className="header-link" activeClassName="header-active" to="/spanish">Español</NavLink> */}
         </div>
       </div>
     );

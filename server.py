@@ -1,7 +1,10 @@
 # server.py
 
 import os
-import urllib
+try:
+    from urllib.parse import unquote
+except:
+    from urllib import unquote
 import signal
 
 from werkzeug.contrib.fixers import ProxyFix
@@ -26,7 +29,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 # client = MongoClient('localhost:27017')
 # db = client.GregueriasData
 
-# customize highlight formatter 
+# customize highlight formatter
 class HighlightFormatter(Formatter):
 
     def format_token(self, text, token, replace=False):
@@ -63,7 +66,7 @@ def get_all_greguerias():
             results = searcher.search(q, limit=None)
             for hit in results:
                 result_item = {
-                    "id": hit["id"],                        
+                    "id": hit["id"],
                     "text": hit["text"],
                     "tags": hit["tags"],
                     "wc": hit["wc"],
@@ -85,7 +88,7 @@ def search():
     fulltext = request.args.get('fulltext')
 
     if fulltext:
-        query.append(urllib.parse.unquote(fulltext))
+        query.append(unquote(fulltext))
 
     wcmin = request.args.get('wcmin', '')
     wcmax = request.args.get('wcmax', '')
@@ -119,7 +122,7 @@ def search():
         for hit in results:
             print(hit.highlights("text"))
             result_item = {
-                "id": hit["id"],                        
+                "id": hit["id"],
                 "text": hit.highlights("text"),
                 "tags": hit["tags"],
                 "wc": hit["wc"],
@@ -148,7 +151,7 @@ def get_gregueria_by_id(gregueria_id):
             for hit in similar_results:
 
                 sim_item = {
-                        "id": hit["id"],                        
+                        "id": hit["id"],
                         "text": hit["text"],
                         "tags": hit["tags"],
                         "wc": hit["wc"]

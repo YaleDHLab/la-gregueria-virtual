@@ -1,18 +1,20 @@
 import React from 'react'
 import { Card,
-		 CardText,
-		 CardBody,
-		 CardFooter,
-		 Badge } from 'reactstrap'
-import { Link,
-		 LinkContainer } from 'react-router-bootstrap'
+	CardText,
+	CardBody,
+	CardFooter,
+	Badge
+} from 'reactstrap'
+import {
+	Link,
+	LinkContainer
+} from 'react-router-bootstrap'
 import $ from 'jquery'
 import Mark from 'mark.js'
 
 import '../styles/Gregueria.css'
 
 export default class Gregueria extends React.Component {
-
 	constructor(props) {
 		super(props)
 		this.createMarkup = this.createMarkup.bind(this)
@@ -28,10 +30,7 @@ export default class Gregueria extends React.Component {
 	}
 
 	componentWillMount() {
-		console.log(this.props.gregueria.text)
-	}
-
-	componentDidMount() {
+		console.log(this.props)
 	}
 
 	render() {
@@ -45,18 +44,17 @@ export default class Gregueria extends React.Component {
 			tagFooter = <CardFooter>{tags}</CardFooter>
 		}
 
-    	let parts = this.props.gregueria.text.split(new RegExp('<mark>'));
-    	console.log(parts)
+  	let parts = this.props.gregueria.text.split(new RegExp('<mark>'));
 
-    	let highlightedText = (<span>
-    		{ parts.map((part, i) =>
-    			<span key={i} style={i % 2 == 1 ? { backgroundColor: '#fff8b5' } : {} }>
-    				{part}
-    			</span>)
-    		} </span>
-    	);
-    
-	
+  	let highlightedText = (<span>
+  		{ parts.map((part, i) =>
+  			<span key={i} style={i % 2 == 1 ? { backgroundColor: '#fff8b5' } : {} }>
+  				{part}
+  			</span>)
+  		} </span>
+  	);
+
+
 		return (
 			<Card className="gregueria">
 				<CardBody onClick={this.handleBodyClick} className="gregueria-body">
@@ -66,6 +64,6 @@ export default class Gregueria extends React.Component {
 				</CardBody>
 				{tagFooter}
 			</Card>
-		)			
+		)
 	}
 }

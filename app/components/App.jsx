@@ -38,7 +38,7 @@ export default class App extends React.Component {
 
 		return (
 			<div>
-				<div>
+				<div className='main-container'>
 					{routeView}
 				</div>
 			</div>

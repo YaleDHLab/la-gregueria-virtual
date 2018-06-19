@@ -4,6 +4,7 @@
 	color: black;
 	font-size: 30px;
 	text-decoration: none;
+	text-align: center;
 }
 
 .header:hover {
@@ -14,9 +15,8 @@
 }
 
 .navigation {
-  	display: flex;
-  	justify-content: flex-start;
-  	margin-bottom: 1.5em;
+  text-align: center;
+  margin-bottom: 1.5em;
 }
 
 .header-link {

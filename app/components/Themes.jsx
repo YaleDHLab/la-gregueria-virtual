@@ -62,7 +62,6 @@ export default class Themes extends React.Component {
 			if (err) {
 				console.warn(err)
 			} else {
-				console.log(res)
 				const results = res.body['results'].map((result) => {
 					return result['id']
 				})
@@ -75,7 +74,6 @@ export default class Themes extends React.Component {
 		if (err) {
 			console.warn(err)
 		} else {
-			console.log(res)
 			const results = res.body['results'].map((result) => {
 				return result['id']
 			})
@@ -128,8 +126,6 @@ export default class Themes extends React.Component {
 			)
 		})
 
-		console.log(nodes)
-
 		const links = Graph.links.filter(link => {
 			if (link.group == this.state.selectedNode.group) {
 				return true;
@@ -141,11 +137,9 @@ export default class Themes extends React.Component {
 				<ForceGraphLink
 	              key={`${link.source}=>${link.target}`}
 	              link={{ source: link.source, target: link.target, value: link.value }}
-	            />					
+	            />
 			)
 		})
-
-		console.log(links)
 
 		const tags = Graph.nodes.map(node => {
 			return {value: node.id, label: node.id}

@@ -32,5 +32,9 @@ npm run build
 
 # seeding the database
 `python utils/seed_db.py`
+
 # creating the Whoosh index
 `python utils/create_index`
+
+# forwarding requests from port 5000 to 80
+`sudo iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to-port 5000`

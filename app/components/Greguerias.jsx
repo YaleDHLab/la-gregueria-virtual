@@ -9,10 +9,7 @@ import api from '../../config'
 import '../styles/Greguerias.css'
 import Mark from 'mark.js'
 
-// var instance = new Mark(document.querySelector(".gregueria-body"));
-
 export default class Greguerias extends React.Component {
-
 	constructor(props) {
 		super(props)
 
@@ -26,139 +23,108 @@ export default class Greguerias extends React.Component {
 		}
 
 		this.addResults = this.addResults.bind(this)
-
 		this.handleOpenModal = this.handleOpenModal.bind(this);
-   		this.handleCloseModal = this.handleCloseModal.bind(this);
-
-	} 
-
-	componentDidMount() {
-		console.log(this.props.results)
-
-	}
-
-	componentDidUpdate() {
-		// instance.markRegExp(/<mark>.*?<\/mark>/)
-		//console.log("shoould")
+   	this.handleCloseModal = this.handleCloseModal.bind(this);
 	}
 
 	handleOpenModal(id) {
-		let url = "gregueria/" + id
-		api.get(url, (err, res) => {
-			if (err) {
-				console.warn(err)
-			} else {
-				this.setState({
-					gregueria: res.body['gregueria'],
-					similarGreguerias: res.body['similar_greguerias'],
-					showModal: true
-				})
-			}
+		api.get('gregueria/' + id, (err, res) => {
+			if (err) console.warn(err)
+			else this.setState({
+				gregueria: res.body['gregueria'],
+				similarGreguerias: res.body['similar_greguerias'],
+				showModal: true
+			})
 		})
 	}
 
 	handleCloseModal() {
 		this.setState({ showModal: false });
 	}
-  
-  	componentDidMount() {
-  		console.log(this.props.results)
-  	}
 
 	addResults() {
-
-		if (this.props.results.length == 0) {
-			return
-		}
-
+		if (this.props.results.length == 0) return
 		if (this.props.results.length < this.state.resultsLoaded) {
-			this.setState({hasMoreResults: false})
+			this.setState({ hasMoreResults: false })
 			return
 		}
 
-    	const resultsLoaded = this.state.resultsLoaded;
-    	this.setState({resultsLoaded: resultsLoaded + this.state.resultsPerLoad})
+  	const resultsLoaded = this.state.resultsLoaded;
+  	this.setState({
+  		resultsLoaded: resultsLoaded + this.state.resultsPerLoad
+  	})
 	}
 
 
 	render() {
 
-		const spinner = (
-			<div className="spinner">
-				<div className="bounce1"></div>
-				<div className="bounce2"></div>
-				<div className="bounce3"></div>
-			</div>
-		)
-
-		let greguerias;
-
-		if (this.props.infinite) {
-			greguerias = (
-				<InfiniteScroll pageStart={0}
-								loadMore={this.addResults}
-								hasMore={this.state.hasMoreResults}
-								loader={spinner}
-								useWindow={false}
-				>
-					{_.take(this.props.results, this.state.resultsLoaded).map((gregueria, i) => {
-								console.log(gregueria.text)
-								return <Gregueria key={i}
-												  map={false}
-												  gregueria={gregueria} 
-												  onBodyClick={this.handleOpenModal}
-										/>
-					})}
-				</InfiniteScroll>
-			)
-		} else {
-			greguerias = (
-				<div>
-					{this.props.results.map((gregueria, i) => {
-						return <Gregueria key={i}
-										  map={false}
-										  gregueria={gregueria}
-										  id={gregueria.id}
-										  onBodyClick={this.handleOpenModal}
-								/>
-					})}
-				</div>
-			)
-		}
-
-		
-
 		return (
-			<div className="greguerias">
-				<ReactModal 
-		           isOpen={this.state.showModal}
-		           contentLabel="Gregueria"
-		           onRequestClose={this.handleCloseModal}
-		           style={{
-              			overlay: {
-                			backgroundColor: 'rgba(0, 0, 0, 0.70)'
-              			},
-              			content: {
-                			top: '30px',
-                			bottom: '30px',
-                			left: '150px',
-                			right: '150px',
-							border: '0px',
-                			borderRadius: '0px',
-                			padding: '0px'
-              			}
-            		}}
-		        >
-		          <GregueriaModal 
-		          				  gregueria={this.state.gregueria}
-		          				  similar={this.state.similarGreguerias}
-		          				  onBodyClick={this.handleOpenModal}
-		          				  onClose={this.handleCloseModal}
-		          />
-		        </ReactModal>
-		        {greguerias}
+			<div className='greguerias'>
+				<ReactModal
+	       isOpen={this.state.showModal}
+	       contentLabel='Gregueria'
+	       onRequestClose={this.handleCloseModal}
+	       style={modalStyle}>
+          <GregueriaModal
+  				  gregueria={this.state.gregueria}
+  				  similar={this.state.similarGreguerias}
+  				  onBodyClick={this.handleOpenModal}
+  				  onClose={this.handleCloseModal}
+          />
+        </ReactModal>
+        {getGreguerias(this.state, this.props, {
+        	handleOpenModal: this.handleOpenModal,
+        	addResults: this.addResults,
+        })}
 			</div>
 		)
 	}
 }
 
+const getGreguerias = (state, props, funcs) => (
+	props.infinite
+		? <InfiniteScroll pageStart={0}
+				loadMore={funcs.addResults}
+				hasMore={state.hasMoreResults}
+				loader={spinner}
+				useWindow={false}>
+			{_.take(props.results, state.resultsLoaded).map((gregueria, i) => (
+				<Gregueria key={i}
+				  map={false}
+				  gregueria={gregueria}
+				  onBodyClick={funcs.handleOpenModal} />
+			))}
+			</InfiniteScroll>
+		: <div>
+				{props.results.map((gregueria, i) => (
+					<Gregueria key={i}
+					  map={false}
+					  gregueria={gregueria}
+					  id={gregueria.id}
+					  onBodyClick={funcs.handleOpenModal}/>
+				))}
+			</div>
+)
+
+const spinner = props => (
+	<div className='spinner'>
+		<div className='bounce1'></div>
+		<div className='bounce2'></div>
+		<div className='bounce3'></div>
+	</div>
+)
+
+const modalStyle = {
+	'overlay': {
+		'backgroundColor': 'rgba(0, 0, 0, 0.70)'
+	},
+	'content': {
+		'top': '30px',
+		'bottom': '30px',
+		'left': '150px',
+		'right': '150px',
+		'border': '0px',
+		'borderRadius': '0px',
+		'padding': '0px'
+	}
+}

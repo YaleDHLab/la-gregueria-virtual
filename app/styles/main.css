@@ -1,3 +1,7 @@
+.main-container {
+	overflow: auto;
+}
+
 p.logo {
 	color: black;
 	margin-right: 2em
@@ -31,11 +35,12 @@ p.logo {
 	min-width: 360px;
 	float: left;
 	height: 100%;
+	overflow: auto;
 }
 
 .right {
-	height: 100vh;
-	top: 0vh;
+	height: 100%;
+	overflow: auto;
 }
 
 @media (max-width: 720px) {
