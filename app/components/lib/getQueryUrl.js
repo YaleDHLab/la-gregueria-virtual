@@ -1,8 +1,8 @@
 module.exports = () => {
   return buildQueryUrl();
-}
+};
 
 const buildQueryUrl = () => {
-  let url = 'greguerias';
+  let url = "greguerias";
   return url;
-}
+};

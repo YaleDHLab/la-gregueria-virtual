@@ -1,47 +1,37 @@
 // App.jsx
-import React from 'react'
-import Header from './Header'
-import { Container } from 'reactstrap'
+import React from "react";
+import Header from "./Header";
+import { Container } from "reactstrap";
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
 
-	constructor(props) {
-		super(props)
+    this.state = {
+      spanish: false
+    };
 
-		this.state = {
-			spanish: false
-		}
+    this.changeLanguage = this.changeLanguage.bind(this);
+  }
 
-		this.changeLanguage = this.changeLanguage.bind(this)
+  componentDidMount() {}
 
-	}
+  changeLanguage() {
+    if (this.state.spanish) {
+      this.setState({ spanish: false });
+      // change word?
+    } else {
+      this.setState({ spanish: true });
+    }
+  }
 
-	componentDidMount() {
+  render() {
+    const routeView = this.props.children;
 
-	}
-
-	changeLanguage() {
-		if (this.state.spanish) {
-			this.setState({spanish: false})
-			// change word?
-		} else {
-			this.setState({spanish: true})
-		}
-	}
-
-
-
-
-	render() {
-
-		const routeView = this.props.children;
-
-		return (
-			<div>
-				<div className='main-container'>
-					{routeView}
-				</div>
-			</div>
-		);
-	}
+    return (
+      <div>
+        <div className="main-container">{routeView}</div>
+      </div>
+    );
+  }
 }
