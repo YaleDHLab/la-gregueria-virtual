@@ -2,9 +2,9 @@
 
 import os
 try:
-    from urllib.parse import unquote
+  from urllib.parse import unquote
 except:
-    from urllib import unquote
+  from urllib import unquote
 import signal
 
 from werkzeug.contrib.fixers import ProxyFix
@@ -32,14 +32,14 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 # customize highlight formatter
 class HighlightFormatter(Formatter):
 
-    def format_token(self, text, token, replace=False):
-        # Use the get_text function to get the text corresponding to the
-        # token
-        tokentext = get_text(text, token, replace)
+  def format_token(self, text, token, replace=False):
+    # Use the get_text function to get the text corresponding to the
+    # token
+    tokentext = get_text(text, token, replace)
 
-        # Return the text as you want it to appear in the highlighted
-        # string
-        return "<mark>%s<mark>" % tokentext
+    # Return the text as you want it to appear in the highlighted
+    # string
+    return "<mark>%s<mark>" % tokentext
 
 hf = HighlightFormatter() # formatter for highlighting
 wf = WholeFragmenter() # fragmenter for splitting words
@@ -53,121 +53,114 @@ parser = QueryParser("text", schema=index.schema)
 
 @app.route("/")
 def load_index():
-    return render_template("index.html")
+  return render_template("index.html")
 
 
 @app.route("/api/greguerias/all/", methods=['GET'])
 def get_all_greguerias():
 
-    try:
-        results_list = []
-        q = Every()  # Whoosh query for returning all items
-        with index.searcher() as searcher:
-            results = searcher.search(q, limit=None)
-            for hit in results:
-                result_item = {
-                    "id": hit["id"],
-                    "text": hit["text"],
-                    "tags": hit["tags"],
-                    "wc": hit["wc"],
-                    "x": hit["x"],
-                    "y": hit["y"]
-                }
-                results_list.append(result_item)
+  try:
+    results_list = []
+    q = Every()  # Whoosh query for returning all items
+    with index.searcher() as searcher:
+      results = searcher.search(q, limit=None)
+      for hit in results:
+        result_item = {
+          "id": hit["id"],
+          "text": hit["text"],
+          "tags": hit["tags"],
+          "wc": hit["wc"],
+          "x": hit["x"],
+          "y": hit["y"]
+        }
+        results_list.append(result_item)
 
-    except Exception as e:
-        return str(e)
-    else:
-        return jsonify({"results": results_list})
+  except Exception as e:
+    return str(e)
+  else:
+    return jsonify({"results": results_list})
 
 @app.route("/api/greguerias", methods=['GET'])
 def search():
 
-    query = []
+  query = []
 
-    fulltext = request.args.get('fulltext')
+  fulltext = request.args.get('fulltext')
 
-    if fulltext:
-        query.append(unquote(fulltext))
+  if fulltext:
+    query.append(unquote(fulltext))
 
-    wcmin = request.args.get('wcmin', '')
-    wcmax = request.args.get('wcmax', '')
+  wcmin = request.args.get('wcmin', '')
+  wcmax = request.args.get('wcmax', '')
 
-    if wcmin or wcmax:
-        if (wcmin):
-            wcmin = wcmin + ' '
-        if (wcmax):
-            wcmax = ' ' + wcmax
-        query.append("wc:[{}TO{}]".format(wcmin, wcmax))
+  if wcmin or wcmax:
+    if (wcmin):
+      wcmin = wcmin + ' '
+    if (wcmax):
+      wcmax = ' ' + wcmax
+    query.append("wc:[{}TO{}]".format(wcmin, wcmax))
 
-    tags = request.args.get('tags')
+  tags = request.args.get('tags')
 
-    if tags:
-        parsed_tags = tags.split(',')
-        query.append("tags:(" + ' '.join(parsed_tags) + ")")
+  if tags:
+    parsed_tags = tags.split(',')
+    query.append("tags:(" + ' '.join(parsed_tags) + ")")
+  q = parser.parse(' '.join(query))
 
-    print(' '.join(query))
-    q = parser.parse(' '.join(query))
+  with index.searcher() as searcher:
 
-    with index.searcher() as searcher:
+    results = searcher.search(q, limit=None)
+    results.fragmenter = wf
+    results.formatter = hf
 
-        results = searcher.search(q, limit=None)
-        results.fragmenter = wf
-        results.formatter = hf
+    results_list = []
 
-        results_list = []
+    for hit in results:
+      result_item = {
+        "id": hit["id"],
+        "text": hit["text"],
+        "tags": hit["tags"],
+        "wc": hit["wc"],
+        "x": hit["x"],
+        "y": hit["y"]
+      }
+      results_list.append(result_item)
 
-        print(q)
-
-        for hit in results:
-            print(hit.highlights("text"))
-            result_item = {
-                "id": hit["id"],
-                "text": hit.highlights("text"),
-                "tags": hit["tags"],
-                "wc": hit["wc"],
-                "x": hit["x"],
-                "y": hit["y"]
-            }
-            results_list.append(result_item)
-
-        print(results_list)
-
-        return jsonify({"results": results_list})
+    return jsonify({"results": results_list})
 
 
 @app.route('/api/gregueria/<gregueria_id>', methods=['GET'])
 def get_gregueria_by_id(gregueria_id):
 
-    try:
+  try:
 
-        sim_list = []
+    sim_list = []
 
-        with index.searcher() as searcher:
-            docnum = searcher.document_number(id=gregueria_id)
-            result = searcher.stored_fields(docnum)
-            similar_results = searcher.more_like(docnum, "text")
+    with index.searcher() as searcher:
+      docnum = searcher.document_number(id=gregueria_id)
+      result = searcher.stored_fields(docnum)
+      similar_results = searcher.more_like(docnum, "text")
 
-            for hit in similar_results:
+      for hit in similar_results:
 
-                sim_item = {
-                        "id": hit["id"],
-                        "text": hit["text"],
-                        "tags": hit["tags"],
-                        "wc": hit["wc"]
-                    }
+        sim_item = {
+            "id": hit["id"],
+            "text": hit["text"],
+            "tags": hit["tags"],
+            "wc": hit["wc"]
+          }
 
-                sim_list.append(sim_item)
+        sim_list.append(sim_item)
 
-            ret = {"gregueria": result, "similar_greguerias": sim_list}
+      ret = {"gregueria": result, "similar_greguerias": sim_list}
 
-    except Exception as e:
-        return str(e)
-    return jsonify(ret)
+  except Exception as e:
+    return str(e)
+  return jsonify(ret)
 
 @app.route('/<path:path>')
 def catch_all(path):
-    return render_template("index.html")
+  return render_template("index.html")
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+  app.run(host='0.0.0.0')

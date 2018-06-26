@@ -36,7 +36,6 @@ export default class Themes extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.getTopic = this.getTopic.bind(this);
     this.runSearch = this.runSearch.bind(this);
-    this.loadGreguerias = this.loadGreguerias.bind(this);
     this.processSearch = this.processSearch.bind(this);
   }
 
@@ -47,26 +46,14 @@ export default class Themes extends React.Component {
       api.get(url, this.processSearch);
     }, 400);
 
-    this.loadGreguerias();
-  }
-
-  loadGreguerias() {
-    let url = "greguerias/all/";
-    api.get(url, (err, res) => {
-      if (err) {
-        console.warn(err);
-      } else {
-        const results = res.body["results"].map(result => {
-          return result["id"];
-        });
-        this.setState({ greguerias: res.body["results"] });
-      }
-    });
+    this.runSearch(null)
   }
 
   processSearch(err, res) {
+    console.log(' got results', err, res)
     if (err) console.warn(err);
     else this.setState({
+      greguerias: res.body["results"],
       results: res.body["results"].map(r => r.id)
     })
   }
@@ -83,19 +70,21 @@ export default class Themes extends React.Component {
     }
   }
 
-  handleChange(selectedOption) {
-    const update = selectedOption === null ? "" : selectedOption;
-    this.setState({ selectedOption: update }, this.runSearch());
+  handleChange(e) {
+    console.log(e)
+    this.setState({
+      selectedOption: e || ''
+    }, this.runSearch(e.value));
   }
 
   handleSelectNode(event, node) {
     this.setState({ selectedNode: node });
   }
 
-  runSearch() {
-    let url = "greguerias?";
-    const tags = document.getElementsByName("select-tag")[0].value;
-    if (tags) url += "tags=" + tags + "&";
+  runSearch(tags) {
+    const url = tags
+      ? "greguerias?tags=" + tags
+      : "greguerias/all"
     this.search(url);
   }
 
@@ -158,8 +147,6 @@ export default class Themes extends React.Component {
               }
             }}
             onSelectNode={this.handleSelectNode}
-            //defaultSelectedNode={{id:"humano"}}
-            //selectedNode={{id:this.state.selectedOption.value}}
             highlightDependencies
             showLabels
           >
